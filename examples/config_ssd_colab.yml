@@ -1,4 +1,5 @@
 train:
+  run_name: train-dipstick-ssd
   # Run on debug mode (which enables more logging)
   debug: True
   # Seed for random operations
