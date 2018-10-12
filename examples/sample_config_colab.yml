@@ -1,3 +1,4 @@
+# see: (https://github.com/tryolabs/luminoth/blob/master/luminoth/models/fasterrcnn/base_config.yml)
 train:
   # Run name for the training session.
   run_name: train-dipstick
