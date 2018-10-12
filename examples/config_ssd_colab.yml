@@ -126,7 +126,7 @@ model:
   anchors:
     # Number of anchors per point in each feature map. This anchors must be in order
     # and they must match with the number of total endpoints
-    anchors_per_point: [10,15, 13,15, 14,20, 17,16, 18,24, 23,33, 25,22, 34,46, 53,49]
+    anchors_per_point: [4, 6, 6, 6, 4, 4]
     # Aspect ratios used for generating anchors. If there is more ratios than
     # anchors per point, it will be used only the firsts to calculate the sclaes.
     # By now, the ratio of 1 must always be at the begin of the array
