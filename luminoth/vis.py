@@ -72,7 +72,8 @@ def draw_rectangle(draw, coordinates, color, width=1, fill=30):
 
     # Pillow doesn't support width in rectangles, so we must emulate it with a
     # loop.
-    for i in range(width):
+    print(width) 
+    for i in range(int(width)):
         coords = [
             coordinates[0] - i,
             coordinates[1] - i,
