@@ -166,14 +166,18 @@ def vis_objects(image, objects, colormap=None, labels=True, scale=1, fill=30):
     draw = ImageDraw.Draw(image, 'RGBA')
     for obj in objects:
         # TODO: Can we do image resolution-agnostic?
-        color = colormap(obj['label'])
+        # color = colormap(obj['label'])
+        p = obj['prob']
+        color = (int(p * 255), int(p * 255), int(p * 255))
         draw_rectangle(
-            draw, obj['bbox'], color, width=round(3 * scale), fill=fill
+            # draw, obj['bbox'], color, width=round(3 * scale), fill=fill
+            draw, obj['bbox'], color, fill=fill
         )
         if labels:
-            draw_label(
-                draw, obj['bbox'][:2], obj['label'], obj['prob'], color,
-                scale=scale
-            )
+            pass
+            # draw_label(
+            #     draw, obj['bbox'][:2], obj['label'], obj['prob'], color,
+            #     scale=scale
+            # )
 
     return image
