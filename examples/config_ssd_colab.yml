@@ -17,7 +17,7 @@ train:
   # enabled
   display_every_steps: 5000
   # Display debugging images every N seconds.
-  display_every_secs:
+  display_every_secs: 5000
   # Shuffle the dataset. It should only be disabled when trying to reproduce
   # some problem on some sample
   random_shuffle: False
