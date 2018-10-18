@@ -84,21 +84,26 @@ dataset:
         left_right: True
         up_down: False
         prob: 0.5
-    - patch:
-        min_height: 30
-        min_width: 30
-        prob: 0.5
-    - distortion:
-        brightness:
-          max_delta: 0.2
-        hue:
-          max_delta: 0.2
-        saturation:
-          lower: 0.5
-          upper: 1.5
-        prob: 0.5
-    - expand:
-        prob: 0.5
+    # Also available:
+    # # If you resize to too small images, you may end up not having any anchors
+    # # that aren't partially outside the image.
+    # - resize:
+    #     min_size: 600
+    #     max_size: 1024
+    #     prob: 0.2
+    # - patch:
+    #     min_height: 600
+    #     min_width: 600
+    #     prob: 0.2
+    # - distortion:
+    #     brightness:
+    #       max_delta: 0.2
+    #     hue:
+    #       max_delta: 0.2
+    #     saturation:
+    #       lower: 0.5
+    #       upper: 1.5
+    #     prob: 0.3
 
 model:
   type: ssd
