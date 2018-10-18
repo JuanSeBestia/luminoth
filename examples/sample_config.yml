@@ -1,3 +1,5 @@
+# See https://github.com/chengcx1019/deeplearning/blob/9dfe804c6d6345c6c3750210a3da46de0ccc8519/vision/luminoth/luminoth/models/fasterrcnn/base_config.yml
+# see https://github.com/adcrn/knest/blob/e33b62269319e7c7b3f51d9880a6de47d21e9e08/config/faster_rcnn/config.yaml
 train:
   # Run name for the training session.
   run_name: my-run

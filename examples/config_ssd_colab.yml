@@ -75,8 +75,8 @@ dataset:
   split: train
   image_preprocessing:
     # Resize the input image to fixed_height and fixed_width
-    fixed_height: 300
-    fixed_width: 300
+    min_size: 512
+    max_size: 1024
 
   # Data augmentation techniques
   data_augmentation:
@@ -104,7 +104,7 @@ model:
   type: ssd
   network:
     # Total number of classes to predict
-    num_classes: 20
+    num_classes: 1
 
   base_network:
     # Which type of pretrained network to use
@@ -138,7 +138,7 @@ model:
 
   target:
     # The ratio of positives-negatives will be 1:`hard_negative_ratio`
-    hard_negative_ratio: 3.
+    hard_negative_ratio: 0.5
     # Threshold with GT to be considered positive
     foreground_threshold: 0.5
     # High and low threshold with GT to be considered negative
@@ -150,12 +150,12 @@ model:
     total_max_detections: 500
     # Maximum number of detections for each class
     # Not used in paper, so I set class_max_detections = total_max_detections
-    class_max_detections: 1
+    class_max_detections: 500
     # NMS threshold used to remove "almost duplicate" of the same class
-    class_nms_threshold: 0.45
+    class_nms_threshold: 0.15
     # Minimum prob to be used as proposed object
     # ( Acording to: https://github.com/pierluigiferrari/ssd_keras/blob/d1b4e7e218af7d31314b9927c08e735e54f5af30/ssd300_training.ipynb#L548 )
-    min_prob_threshold: 0.5
+    min_prob_threshold: 0.2
     # Filter proposals from anchors partially outside the image.
     filter_outside_anchors: True
 
