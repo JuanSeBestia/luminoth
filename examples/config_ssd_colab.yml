@@ -1,7 +1,7 @@
 train:
   run_name: train-dipstick-ssd
   # Run on debug mode (which enables more logging)
-  debug: True
+  debug: False
   # Seed for random operations
   seed:
   # Training batch size for images.
