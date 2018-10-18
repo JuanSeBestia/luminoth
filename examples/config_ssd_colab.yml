@@ -15,9 +15,9 @@ train:
   no_log: False
   # Displays debugging images with results every N steps. Debug mode must be
   # enabled
-  display_every_steps: 5000
+  display_every_steps: 
   # Display debugging images every N seconds.
-  display_every_secs: 5000
+  display_every_secs: 600
   # Shuffle the dataset. It should only be disabled when trying to reproduce
   # some problem on some sample
   random_shuffle: False
@@ -61,7 +61,7 @@ train:
   num_epochs: 10000
 
   # Image visualization mode, options = train, eval, debug, (empty). Default=(empty)
-  image_vis: debug
+  image_vis: train
 
 eval:
   # Image visualization mode, options = train, eval, debug, (empty). Default=(empty)
