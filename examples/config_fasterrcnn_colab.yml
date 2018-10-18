@@ -83,7 +83,7 @@ dataset:
   # From which directory to read the dataset.
   dir: dataset/pascal/tf
   # Which split of tfrecords to look for.
-  split: train
+  split: all
   # Resize image according to min_size and max_size.
   image_preprocessing:
     min_size: 512

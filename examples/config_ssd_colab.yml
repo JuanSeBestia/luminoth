@@ -70,9 +70,9 @@ eval:
 dataset:
   type: tfrecord
   # From which directory to read the dataset
-  dir: datasets/voc/tf
+  dir: datasets/pascal/tf
   # Which split of tfrecords to look for
-  split: train
+  split: all
   image_preprocessing:
     # Resize the input image to fixed_height and fixed_width
     min_size: 512
