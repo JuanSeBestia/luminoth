@@ -211,7 +211,7 @@ model:
       # Filter proposals from anchors partially outside the image.
       filter_outside_anchors: False
       # Minimum probability to be used as proposed object.
-      min_prob_threshold: 0.0
+      min_prob_threshold: 0.5
 
     target:
       # Margin to crop proposals to close to the border.

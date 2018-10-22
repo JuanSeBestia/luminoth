@@ -151,6 +151,7 @@ model:
     background_threshold_low: 0.0  # Not used at the moment
 
   proposals:
+    min_size: 0  # Disable using 0.
     # Maximum total detections for an image (sorted by score)
     total_max_detections: 800
     # Maximum number of detections for each class
@@ -160,7 +161,7 @@ model:
     class_nms_threshold: 0.15
     # Minimum prob to be used as proposed object
     # ( Acording to: https://github.com/pierluigiferrari/ssd_keras/blob/d1b4e7e218af7d31314b9927c08e735e54f5af30/ssd300_training.ipynb#L548 )
-    min_prob_threshold: 0.2
+    min_prob_threshold: 0.5
     # Filter proposals from anchors partially outside the image.
     filter_outside_anchors: True
 

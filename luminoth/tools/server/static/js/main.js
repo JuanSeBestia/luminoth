@@ -33,27 +33,27 @@
     })
 
     // Draw labels
-    ctx.font = 'bold ' + fontSize + 'px Quicksand'
-    ctx.textBaseline = 'bottom'
-    drawing.elements.forEach(elem => {
-      if (elem.prob < probThresold) {
-        return
-      }
+    // ctx.font = 'bold ' + fontSize + 'px Quicksand'
+    // ctx.textBaseline = 'bottom'
+    // drawing.elements.forEach(elem => {
+    //   if (elem.prob < probThresold) {
+    //     return
+    //   }
 
-      const text = elem.label + ' ' + elem.prob.toFixed(2)
-      const textWidth = ctx.measureText(text).width
+    //   const text = elem.label + ' ' + elem.prob.toFixed(2)
+    //   const textWidth = ctx.measureText(text).width
 
-      ctx.fillStyle = elem.labelColor
-      ctx.fillRect(
-        elem.x,
-        elem.y + elem.height - fontSize - pad * 2 - outlineWidth,
-        textWidth + pad * 2 + outlineWidth,
-        fontSize + pad * 2 + outlineWidth
-      )
+    //   ctx.fillStyle = elem.labelColor
+    //   ctx.fillRect(
+    //     elem.x,
+    //     elem.y + elem.height - fontSize - pad * 2 - outlineWidth,
+    //     textWidth + pad * 2 + outlineWidth,
+    //     fontSize + pad * 2 + outlineWidth
+    //   )
 
-      ctx.fillStyle = 'rgba(30, 30, 30, 1.0)'
-      ctx.fillText(text, elem.x + pad, elem.y + elem.height - pad)
-    })
+    //   ctx.fillStyle = 'rgba(30, 30, 30, 1.0)'
+    //   ctx.fillText(text, elem.x + pad, elem.y + elem.height - pad)
+    // })
   }
 
   function draw(probThresold) {
@@ -116,10 +116,11 @@
     drawing.elements = []
     for (i = 0; i < objects.length; i++) {
       const obj = objects[i]
+      const color = 255 * obj.prob;
       drawing.elements.push({
         prob: obj.prob,
         label: obj.label,
-        fillColor: window.hexToRgba(labelHexColors[obj.label], 0.1),
+        fillColor: "rgba("+color+", "+color+", "+color+", 0.6)",
         outlineColor: window.hexToRgba(labelHexColors[obj.label], 1.0),
         labelColor: window.hexToRgba(labelHexColors[obj.label], 0.5),
         x: obj.bbox[0],
