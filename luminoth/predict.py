@@ -6,6 +6,7 @@ import skvideo.io
 import sys
 import time
 import tensorflow as tf
+import csv
 
 from PIL import Image
 from luminoth.tools.checkpoint import get_checkpoint_config
@@ -287,5 +288,12 @@ def predict(path_or_dir, config_files, checkpoint, override_params,
                     'objects': objects,
                 }) + '\n'
             )
+            
+            # Write results
+            csvFile = open(output_path+".csv", 'a')
+            with csvFile:
+                writer = csv.writer(csvFile)
+                writer.writerow([str(file.split('/')[-1]),str(len(objects))])
+            
 
     output.close()
