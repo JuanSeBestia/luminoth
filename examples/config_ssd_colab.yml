@@ -152,7 +152,7 @@ model:
 
   proposals:
     # Maximum total detections for an image (sorted by score)
-    total_max_detections: 500
+    total_max_detections: 800
     # Maximum number of detections for each class
     # Not used in paper, so I set class_max_detections = total_max_detections
     class_max_detections: 500
