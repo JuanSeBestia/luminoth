@@ -19,7 +19,7 @@ from luminoth.utils.image_vis import image_vis_summaries
 @click.option('--from-global-step', type=int, default=None, help='Consider only checkpoints after this global step')  # noqa
 @click.option('override_params', '--override', '-o', multiple=True, help='Override model config params.')  # noqa
 @click.option('--files-per-class', type=int, default=10, help='How many files per class display in every epoch.')  # noqa
-@click.option('--max-detections', type=int, default=100, help='Max detections to consider.')  # noqa
+@click.option('--max-detections', type=int, default=800, help='Max detections to consider.')  # noqa
 def eval(dataset_split, config_files, watch, from_global_step, override_params,
          files_per_class, max_detections):
     """Evaluate models using dataset."""

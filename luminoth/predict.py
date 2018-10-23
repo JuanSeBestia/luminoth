@@ -180,7 +180,7 @@ def predict_video(network, path, only_classes=None, ignore_classes=None,
 @click.option('output_path', '--output', '-f', default='-', help='Output file with the predictions (for example, JSON bounding boxes).')  # noqa
 @click.option('--save-media-to', '-d', help='Directory to store media to.')
 @click.option('--min-prob', default=0.5, type=float, help='When drawing, only draw bounding boxes with probability larger than.')  # noqa
-@click.option('--max-detections', default=100, type=int, help='Maximum number of detections per image.')  # noqa
+@click.option('--max-detections', default=800, type=int, help='Maximum number of detections per image.')  # noqa
 @click.option('--only-class', '-k', default=None, multiple=True, help='Class to ignore when predicting.')  # noqa
 @click.option('--ignore-class', '-K', default=None, multiple=True, help='Class to ignore when predicting.')  # noqa
 @click.option('--debug', is_flag=True, help='Set debug level logging.')
