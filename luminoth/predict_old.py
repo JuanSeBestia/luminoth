@@ -7,9 +7,6 @@ import sys
 import time
 import tensorflow as tf
 import csv
-from threading import Thread
-from PIL import Image
-from six.moves import _thread
 
 from PIL import Image
 from luminoth.tools.checkpoint import get_checkpoint_config
@@ -19,7 +16,6 @@ from luminoth.vis import build_colormap, vis_objects
 
 IMAGE_FORMATS = ['jpg', 'jpeg', 'png']
 VIDEO_FORMATS = ['mov', 'mp4', 'avi']  # TODO: check if more formats work
-
 
 
 def get_file_type(filename):
@@ -73,10 +69,6 @@ def filter_classes(objects, only_classes=None, ignore_classes=None):
 
 def predict_image(network, path, only_classes=None, ignore_classes=None,
                   save_path=None):
-
-    # Wait for the model to finish loading.
-    NETWORK_START_THREAD.join()
-
     click.echo('Predicting {}...'.format(path), nl=False)
 
     # Open and read the image to predict.
@@ -87,17 +79,16 @@ def predict_image(network, path, only_classes=None, ignore_classes=None,
             click.echo()
             click.echo('Error while processing {}: {}'.format(path, e))
             return
-    objects = PREDICTOR_NETWORK.predict_image(image)
-    
+
     # Run image through the network.
-    #objects = network.predict_image(image)
+    objects = network.predict_image(image)
 
     # Filter the results according to the user input.
-    # objects = filter_classes(
-    #     objects,
-    #     only_classes=only_classes,
-    #     ignore_classes=ignore_classes
-    # )
+    objects = filter_classes(
+        objects,
+        only_classes=only_classes,
+        ignore_classes=ignore_classes
+    )
 
     # Save predicted image.
     if save_path:
@@ -181,16 +172,6 @@ def predict_video(network, path, only_classes=None, ignore_classes=None,
     return objects_per_frame
 
 
-def start_network(config):
-    global PREDICTOR_NETWORK
-    try:
-        PREDICTOR_NETWORK = PredictorNetwork(config)
-    except Exception as e:
-        # An error occurred loading the model; interrupt the whole server.
-        tf.logging.error(e)
-        _thread.interrupt_main()
-
-
 @click.command(help="Obtain a model's predictions.")
 @click.argument('path-or-dir', nargs=-1)
 @click.option('config_files', '--config', '-c', multiple=True, help='Config to use.')  # noqa
@@ -219,43 +200,13 @@ def predict(path_or_dir, config_files, checkpoint, override_params,
     if debug:
         tf.logging.set_verbosity(tf.logging.DEBUG)
     else:
-        tf.logging.set_verbosity(tf.logging.INFO)
+        tf.logging.set_verbosity(tf.logging.ERROR)
 
-    if checkpoint:
-        config = get_checkpoint_config(checkpoint)
-    elif config_files:
-        config = get_config(config_files)
-    else:
+    if only_class and ignore_class:
         click.echo(
-            'Neither checkpoint not config specified, assuming `accurate`.'
+            "Only one of `only-class` or `ignore-class` may be specified."
         )
-        config = get_checkpoint_config('accurate')
-
-    if override_params:
-        config = override_config_params(config, override_params)
-
-    # Bounding boxes will be filtered by frontend (using slider), so we set a
-    # low threshold.
-    if config.model.type == 'fasterrcnn':
-        config.model.rcnn.proposals.min_prob_threshold = 0.5
-    elif config.model.type == 'ssd':
-        config.model.proposals.min_prob_threshold = 0.5
-    else:
-        raise ValueError(
-            "Model type '{}' not supported".format(config.model.type)
-        )
-
-    # Initialize model
-    global NETWORK_START_THREAD
-    NETWORK_START_THREAD = Thread(target=start_network, args=(config,))
-    NETWORK_START_THREAD.start()
-
-    
-    # if only_class and ignore_class:
-    #     click.echo(
-    #         "Only one of `only-class` or `ignore-class` may be specified."
-    #     )
-    #     return
+        return
 
     # Process the input and get the actual files to predict.
     files = resolve_files(path_or_dir)
@@ -294,22 +245,22 @@ def predict(path_or_dir, config_files, checkpoint, override_params,
         config = override_config_params(config, override_params)
 
     # Filter bounding boxes according to `min_prob` and `max_detections`.
-    # if config.model.type == 'fasterrcnn':
-    #     if config.model.network.with_rcnn:
-    #         config.model.rcnn.proposals.total_max_detections = max_detections
-    #     else:
-    #         config.model.rpn.proposals.post_nms_top_n = max_detections
-    #     config.model.rcnn.proposals.min_prob_threshold = min_prob
-    # elif config.model.type == 'ssd':
-    #     config.model.proposals.total_max_detections = max_detections
-    #     config.model.proposals.min_prob_threshold = min_prob
-    # else:
-    #     raise ValueError(
-    #         "Model type '{}' not supported".format(config.model.type)
-    #     )
+    if config.model.type == 'fasterrcnn':
+        if config.model.network.with_rcnn:
+            config.model.rcnn.proposals.total_max_detections = max_detections
+        else:
+            config.model.rpn.proposals.post_nms_top_n = max_detections
+        config.model.rcnn.proposals.min_prob_threshold = min_prob
+    elif config.model.type == 'ssd':
+        config.model.proposals.total_max_detections = max_detections
+        config.model.proposals.min_prob_threshold = min_prob
+    else:
+        raise ValueError(
+            "Model type '{}' not supported".format(config.model.type)
+        )
 
     # Instantiate the model indicated by the config.
-    # network = PredictorNetwork(config)
+    network = PredictorNetwork(config)
 
     # Iterate over files and run the model on each.
     for file in files:
@@ -323,7 +274,7 @@ def predict(path_or_dir, config_files, checkpoint, override_params,
         predictor = predict_image if file_type == 'image' else predict_video
 
         objects = predictor(
-            None, file,
+            network, file,
             only_classes=only_class,
             ignore_classes=ignore_class,
             save_path=save_path,
