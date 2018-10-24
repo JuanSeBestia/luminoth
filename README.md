@@ -12,6 +12,11 @@ The images consists of metal bars positioned on banners, the rods are horizontal
 
 ![Image input](assets/train_image25.jpg)
 
+## Dataset used
+
+The dataset used to train this proyect found in:
+[https://github.com/jsdussanc/dipstick](https://github.com/jsdussanc/dipstick)
+
 ## Usage API
 
 Make post to api:
