@@ -240,11 +240,11 @@ def run(config, target='', cluster_spec=None, is_chief=True, job_name=None,
 
                 # TODO: Add image summary every once in a while.
 
-                tf.logging.info(
-                    '{}step: {}, file: {}, train_loss: {}, in {:.2f}s'.format(
-                        log_prefix, step, filename, train_loss,
-                        time.time() - before
-                    ))
+                # tf.logging.info(
+                #     '{}step: {}, file: {}, train_loss: {}, in {:.2f}s'.format(
+                #         log_prefix, step, filename, train_loss,
+                #         time.time() - before
+                #     ))
 
                 if is_chief and step == 1:
                     # We save the run after first batch to make sure everything

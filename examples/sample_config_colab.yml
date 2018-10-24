@@ -1,15 +1,14 @@
-# See https://github.com/chengcx1019/deeplearning/blob/9dfe804c6d6345c6c3750210a3da46de0ccc8519/vision/luminoth/luminoth/models/fasterrcnn/base_config.yml
-# see https://github.com/adcrn/knest/blob/e33b62269319e7c7b3f51d9880a6de47d21e9e08/config/faster_rcnn/config.yaml
+# see: (https://github.com/tryolabs/luminoth/blob/master/luminoth/models/fasterrcnn/base_config.yml)
 train:
   # Run name for the training session.
-  run_name: my-run
+  run_name: train-dipstick
   # Directory in which model checkpoints & summaries (for Tensorboard) will be saved.
   job_dir: jobs/
 
 dataset:
   type: object_detection
   # From which directory to read the dataset.
-  dir: datasets/voc/tf
+  dir: dataset/pascal/tf
 
 model:
   type: fasterrcnn

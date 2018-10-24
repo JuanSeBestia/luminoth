@@ -17,6 +17,7 @@ class PascalVOCReader(ObjectDetectionReader):
         self._labels_path = os.path.join(self._data_dir, 'ImageSets', 'Main')
         self._images_path = os.path.join(self._data_dir, 'JPEGImages')
         self._annots_path = os.path.join(self._data_dir, 'Annotations')
+        print(self._data_dir, self._labels_path, self._images_path, self._annots_path, self._split )
 
         self.yielded_records = 0
         self.errors = 0
@@ -44,13 +45,13 @@ class PascalVOCReader(ObjectDetectionReader):
             )
 
         if not tf.gfile.Exists(self._labels_path):
-            raise InvalidDataDirectory('Labels path is missing')
+            raise InvalidDataDirectory('Labels path is missing'+ self._labels_path)
 
         if not tf.gfile.Exists(self._images_path):
-            raise InvalidDataDirectory('Images path is missing')
+            raise InvalidDataDirectory('Images path is missing' + self._images_path)
 
         if not tf.gfile.Exists(self._annots_path):
-            raise InvalidDataDirectory('Annotations path is missing')
+            raise InvalidDataDirectory('Annotations path is missing'+ self._annots_path)
 
     def _get_split_path(self):
         return os.path.join(self._labels_path, '{}.txt'.format(self._split))
@@ -83,7 +84,7 @@ class PascalVOCReader(ObjectDetectionReader):
             try:
                 annotation_path = self._get_image_annotation(image_id)
                 image_path = self._get_image_path(image_id)
-
+                print(image_id,image_path,annotation_path)
                 # Read both the image and the annotation into memory.
                 annotation = read_xml(annotation_path)
                 image = read_image(image_path)
