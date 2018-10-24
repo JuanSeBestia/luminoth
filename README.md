@@ -108,6 +108,12 @@ pip install -e .
 pip install -r luminoth/requeriments.txt
 ```
 
+#### Assets
+
+~/.luminoth/ [https://drive.google.com/open?id=1-n7V1ABQqc4UUBenwvWgAr1kmY4aBegA](https://drive.google.com/open?id=1-n7V1ABQqc4UUBenwvWgAr1kmY4aBegA)
+
+~/luminoth/jobs/ [https://drive.google.com/open?id=177PXTQE36_WkqCihYPY74Vkh_pTPhApu](https://drive.google.com/open?id=177PXTQE36_WkqCihYPY74Vkh_pTPhApu)
+
 ## Run web service
 
 ```bash
