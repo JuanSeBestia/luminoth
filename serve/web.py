@@ -1,4 +1,5 @@
 import click
+import urllib
 import tensorflow as tf
 
 from flask import Flask, jsonify, request, render_template
@@ -12,6 +13,22 @@ from luminoth.utils.predicting import PredictorNetwork
 
 app = Flask(__name__)
 
+def get_image_url():
+    image = request.args.get("image",None)
+    if not image:
+        raise ValueError
+    print("image",image)
+    file_name = '/tmp/predict.jpg'
+    urllib.request.urlretrieve(image, file_name)
+
+    with tf.gfile.Open(file_name, 'rb') as f:
+        try:
+            image = Image.open(f).convert('RGB')
+        except (tf.errors.OutOfRangeError, OSError) as e:
+            raise ValueError
+
+    return image
+            
 def get_image():
     image = request.files.get('image')
     if not image:
@@ -31,11 +48,28 @@ def predict(model_name):
     try:
         # TODO ADD more models
         if request.method == 'GET':
-            return jsonify(error='Use POST method to send image.', count=-1)
+            print(request.args)
+            #return jsonify(error='Use POST method to send image.', count=-1)
+            total_predictions = request.args.get('total', None)
+            min_prob = request.args.get('min_prob', None)
+            only_number = request.args.get('only_number', False)
+            try:
+                image_array = get_image_url()
+            except ValueError:
+                return jsonify(error='Missing image', count=-2)
+            except OSError:
+                return jsonify(error='Incompatible file type', count=-3)
+        else: #POST
+            total_predictions = request.form.get('total', None)
+            min_prob = request.form.get('min_prob', None)
+            only_number = request.form.get('only_number', False)
+            try:
+                image_array = get_image()
+            except ValueError:
+                return jsonify(error='Missing image', count=-2)
+            except OSError:
+                return jsonify(error='Incompatible file type', count=-3)
 
-        total_predictions = request.form.get('total', None)
-        min_prob = request.form.get('min_prob', None)
-        only_number = request.form.get('only_number', False)
         if total_predictions is not None:
             try:
                 total_predictions = int(total_predictions)
@@ -49,12 +83,7 @@ def predict(model_name):
         if only_number == "False":
             only_number = None
 
-        try:
-            image_array = get_image()
-        except ValueError:
-            return jsonify(error='Missing image', count=-2)
-        except OSError:
-            return jsonify(error='Incompatible file type', count=-3)
+        
 
         # Wait for the model to finish loading.
         NETWORK_START_THREAD.join()
