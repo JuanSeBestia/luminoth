@@ -27,8 +27,15 @@ curl -X POST \
   -H 'content-type: multipart/form-data\
   -F image=@/home/inkremental-3/gitKraken/dipstick/VOC_dipstick_512/JPEGImages/valid_task_image39.jpg \ # Required
   -F min_prob=0.7 \ # Optional FLOAT, get obj.prob >= min_prob
-  -F total=800 \ # Optional NUMBER, get max ${total} objects 
+  -F total=800 \ # Optional NUMBER, get max ${total} objects
   -F only_number=True \ # Optional,True or False get only len(objects)
+```
+
+or
+
+``` bash
+curl -X GET \
+  'http://0.0.0.0:5000/api/fasterrcnn/predict/?min_prob=0.7&total_predictions=800&only_number=True&image=https%3A%2F%2Fs3.us-east-2.amazonaws.com%2Ftaskg
 ```
 
 ### Response
@@ -107,6 +114,12 @@ cd luminoth
 pip install -e .
 pip install -r luminoth/requeriments.txt
 ```
+
+#### Assets
+
+~/.luminoth/ [https://drive.google.com/open?id=1-n7V1ABQqc4UUBenwvWgAr1kmY4aBegA](https://drive.google.com/open?id=1-n7V1ABQqc4UUBenwvWgAr1kmY4aBegA)
+
+~/luminoth/jobs/ [https://drive.google.com/open?id=177PXTQE36_WkqCihYPY74Vkh_pTPhApu](https://drive.google.com/open?id=177PXTQE36_WkqCihYPY74Vkh_pTPhApu)
 
 ## Run web service
 
