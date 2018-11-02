@@ -15,7 +15,7 @@ The images consists of metal bars positioned on banners, the rods are horizontal
 ## Dataset used
 
 The dataset used to train this proyect found in:
-[https://github.com/jsdussanc/dipstick](https://github.com/jsdussanc/dipstick)
+[https://github.com/JuanSeBestia/dipstick](https://github.com/JuanSeBestia/dipstick)
 
 ## Usage API
 
@@ -109,7 +109,7 @@ To use Luminoth, [TensorFlow](https://www.tensorflow.org/install/) must be insta
 First, clone the repo on your machine and then install with `pip`:
 
 ```bash
-!git clone https://github.com/jsdussanc/luminoth.git
+!git clone https://github.com/JuanSeBestia/luminoth.git
 cd luminoth
 pip install -e .
 pip install -r luminoth/requeriments.txt
