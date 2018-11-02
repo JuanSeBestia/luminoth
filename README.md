@@ -144,7 +144,7 @@ By default summary and graph logs are saved to `jobs/` under the current directo
 see more [https://www.tensorflow.org/guide/summaries_and_tensorboard](https://www.tensorflow.org/guide/summaries_and_tensorboard)
 
 ```bash
-tensorboard --logdir path/to/jobs
+tensorboard --logdir path/to/jobs --port=8008
 ```
 
 ![assets/TensorBoard.png](assets/TensorBoard.png)
