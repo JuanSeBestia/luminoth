@@ -90,6 +90,10 @@ Possible errors
 }
 ```
 
+### Note
+
+Use the param --save-path to store image saves or empty to disable
+
 ## Usage App web
 
 Go to [http://0.0.0.0:5000/](http://0.0.0.0:5000/)
