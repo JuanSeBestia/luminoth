@@ -1,6 +1,8 @@
 import click
 import urllib
 import tensorflow as tf
+import numpy as np
+import os
 
 from flask import Flask, jsonify, request, render_template
 from threading import Thread
@@ -10,6 +12,7 @@ from six.moves import _thread
 from luminoth.tools.checkpoint import get_checkpoint_config
 from luminoth.utils.config import get_config, override_config_params
 from luminoth.utils.predicting import PredictorNetwork
+from luminoth.vis import build_colormap, vis_objects
 
 app = Flask(__name__)
 
@@ -53,6 +56,8 @@ def predict(model_name):
             total_predictions = request.args.get('total', None)
             min_prob = request.args.get('min_prob', None)
             only_number = request.args.get('only_number', False)
+            id_task = request.args.get('id', False)
+            
             try:
                 image_array = get_image_url()
             except ValueError:
@@ -63,6 +68,7 @@ def predict(model_name):
             total_predictions = request.form.get('total', None)
             min_prob = request.form.get('min_prob', None)
             only_number = request.form.get('only_number', False)
+            id_task = request.form.get('id', False)
             try:
                 image_array = get_image()
             except ValueError:
@@ -82,6 +88,10 @@ def predict(model_name):
                 min_prob = None
         if only_number == "False":
             only_number = None
+        
+        if not id_task:
+            return jsonify(error='Missing task_id', count=-4)
+
 
         
 
@@ -95,6 +105,12 @@ def predict(model_name):
 
         if total_predictions:
             objects = objects[:total_predictions]
+
+        # Save predicted image.
+        if SAVE_PATH_GLOBAL:
+            print("{}{}_Counted.jpg".format(SAVE_PATH_GLOBAL,id_task))
+            vis_objects(np.array(image_array), objects).save("{}{}_Counted.jpg".format(SAVE_PATH_GLOBAL,id_task))
+
         if only_number:
             return jsonify({'count': len(objects)})
         
@@ -122,7 +138,12 @@ def start_network(config):
 @click.option('--port', default=5000, help='Port to listen to.')
 @click.option('--debug', is_flag=False, help='Set debug level logging.')
 @click.option('--min-prob', default=0.5, type=float, help='Only get bounding boxes with probability larger than.')  # noqa
-def web(config_files, checkpoint, override_params, host, port, debug, min_prob):
+@click.option('--save-path', default="./output/", help='Put the location to save images predicted')  # noqa
+
+def web(config_files, checkpoint, override_params, host, port, debug, min_prob, save_path):
+    global SAVE_PATH_GLOBAL
+    if save_path:
+        SAVE_PATH_GLOBAL = save_path
     if debug:
         tf.logging.set_verbosity(tf.logging.DEBUG)
     else:
@@ -150,6 +171,12 @@ def web(config_files, checkpoint, override_params, host, port, debug, min_prob):
         raise ValueError(
             "Model type '{}' not supported".format(config.model.type)
         )
+    
+    # Verfy folder path or create
+    try:
+        os.stat(SAVE_PATH_GLOBAL)
+    except:
+        os.mkdir(SAVE_PATH_GLOBAL)    
 
     # Initialize model
     global NETWORK_START_THREAD

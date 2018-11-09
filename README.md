@@ -15,7 +15,7 @@ The images consists of metal bars positioned on banners, the rods are horizontal
 ## Dataset used
 
 The dataset used to train this proyect found in:
-[https://github.com/jsdussanc/dipstick](https://github.com/jsdussanc/dipstick)
+[https://github.com/JuanSeBestia/dipstick](https://github.com/JuanSeBestia/dipstick)
 
 ## Usage API
 
@@ -90,6 +90,10 @@ Possible errors
 }
 ```
 
+### Note
+
+Use the param --save-path to store image saves or empty to disable
+
 ## Usage App web
 
 Go to [http://0.0.0.0:5000/](http://0.0.0.0:5000/)
@@ -109,7 +113,7 @@ To use Luminoth, [TensorFlow](https://www.tensorflow.org/install/) must be insta
 First, clone the repo on your machine and then install with `pip`:
 
 ```bash
-!git clone https://github.com/jsdussanc/luminoth.git
+!git clone https://github.com/JuanSeBestia/luminoth.git
 cd luminoth
 pip install -e .
 pip install -r luminoth/requeriments.txt
@@ -144,7 +148,7 @@ By default summary and graph logs are saved to `jobs/` under the current directo
 see more [https://www.tensorflow.org/guide/summaries_and_tensorboard](https://www.tensorflow.org/guide/summaries_and_tensorboard)
 
 ```bash
-tensorboard --logdir path/to/jobs
+tensorboard --logdir path/to/jobs --port=8008
 ```
 
 ![assets/TensorBoard.png](assets/TensorBoard.png)
