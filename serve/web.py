@@ -24,7 +24,11 @@ def get_image_url():
     if not image:
         raise ValueError
     print("image", image)
-    urllib.request.urlretrieve(image, SAVE_PATH_TMP)
+    try:
+        urllib.request.urlretrieve(image, SAVE_PATH_TMP)
+        except Exception as e:
+            # Python2
+            urllib.urlretrieve(image, SAVE_PATH_TMP)
 
     with tf.gfile.Open(SAVE_PATH_TMP, 'rb') as f:
         try:
@@ -129,7 +133,7 @@ def predict(model_name):
         
         if force_square == 'false':
             force_square = False
-            
+
         if total_predictions is not None:
             try:
                 total_predictions = int(total_predictions)
