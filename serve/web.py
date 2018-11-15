@@ -26,9 +26,9 @@ def get_image_url():
     print("image", image)
     try:
         urllib.request.urlretrieve(image, SAVE_PATH_TMP)
-        except Exception as e:
-            # Python2
-            urllib.urlretrieve(image, SAVE_PATH_TMP)
+    except Exception as e:
+        # Python2
+        urllib.urlretrieve(image, SAVE_PATH_TMP)
 
     with tf.gfile.Open(SAVE_PATH_TMP, 'rb') as f:
         try:
