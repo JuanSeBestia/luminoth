@@ -101,3 +101,4 @@ Pipfile.lock
 /models
 /jobs
 .*
+serve/static/output/

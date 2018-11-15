@@ -154,9 +154,11 @@
           if (xhr.status == 200) {
             storeElementsToDraw(response.objects)
 
-            drawImage(formdata.getAll('image')[0])
-            canvas.style.display = ''
-            document.getElementById('result-separator').style.display = 'initial'
+            drawImage(formdata.getAll('image')[0]);
+            canvas.style.display = '';
+            document.getElementById('result-separator').style.display = 'initial';
+            document.getElementById('img-result').style.display = 'initial';
+            document.getElementById('img-result').src = response.image_vis;
           }
 
           document.getElementById('api-response').innerHTML = xhr.response

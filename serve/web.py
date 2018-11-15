@@ -14,31 +14,80 @@ from luminoth.utils.config import get_config, override_config_params
 from luminoth.utils.predicting import PredictorNetwork
 from luminoth.vis import build_colormap, vis_objects
 
+import cv2
+
 app = Flask(__name__)
 
+
 def get_image_url():
-    image = request.args.get("image",None)
+    image = request.args.get("image", None)
     if not image:
         raise ValueError
-    print("image",image)
-    file_name = '/tmp/predict.jpg'
-    urllib.request.urlretrieve(image, file_name)
+    print("image", image)
+    urllib.request.urlretrieve(image, SAVE_PATH_TMP)
 
-    with tf.gfile.Open(file_name, 'rb') as f:
+    with tf.gfile.Open(SAVE_PATH_TMP, 'rb') as f:
         try:
             image = Image.open(f).convert('RGB')
         except (tf.errors.OutOfRangeError, OSError) as e:
             raise ValueError
 
     return image
-            
+
+
 def get_image():
     image = request.files.get('image')
     if not image:
         raise ValueError
 
     image = Image.open(image.stream).convert('RGB')
+    image.save(SAVE_PATH_TMP)
     return image
+
+
+def mod_image(image_path, minsize, maxsize, autofill=False):
+    print(image_path)
+    edit_image = cv2.imread(image_path)
+    minx = 0
+    miny = 0
+    # make square
+    if (autofill):
+        height, width, _ = edit_image.shape
+        maxpixels = width if width >= height else height
+        square = np.zeros((maxpixels, maxpixels, 3), np.uint8)
+        miny = int((maxpixels-height)/2)
+        maxy = int(maxpixels-(maxpixels-height)/2)
+        minx = int((maxpixels-width)/2)
+        maxx = int(maxpixels-(maxpixels-width)/2)
+        square[miny:maxy, minx:maxx] = edit_image
+        edit_image = square
+
+    # scale to min
+    scale1 = 1
+    if (minsize):
+        height, width, _ = edit_image.shape
+        minpixels = height if width >= height else width
+        if minpixels < minsize:
+            scale1 = minsize/minpixels
+            edit_image = cv2.resize(edit_image, (0, 0),
+                                    fx=(scale1), fy=(scale1))
+
+    # scale to max
+    scale2 = 1
+    if (maxsize):
+        height, width, _ = edit_image.shape
+        maxpixels = width if width >= height else height
+        if maxpixels > maxsize:
+            scale2 = maxsize/maxpixels
+            edit_image = cv2.resize(edit_image, (0, 0),
+                                    fx=(scale2), fy=(scale2))
+    cv2.imwrite(image_path, edit_image)
+    with tf.gfile.Open(SAVE_PATH_TMP, 'rb') as f:
+        try:
+            image = Image.open(f).convert('RGB')
+            return [image, minx, miny, scale1*scale2]
+        except (tf.errors.OutOfRangeError, OSError) as e:
+            raise ValueError
 
 
 @app.route('/')
@@ -52,30 +101,35 @@ def predict(model_name):
         # TODO ADD more models
         if request.method == 'GET':
             print(request.args)
-            #return jsonify(error='Use POST method to send image.', count=-1)
+            # return jsonify(error='Use POST method to send image.', count=-1)
             total_predictions = request.args.get('total', None)
             min_prob = request.args.get('min_prob', None)
             only_number = request.args.get('only_number', False)
             id_task = request.args.get('id', False)
-            
+            force_square = request.args.get('force_square', True)
+
             try:
                 image_array = get_image_url()
             except ValueError:
                 return jsonify(error='Missing image', count=-2)
             except OSError:
                 return jsonify(error='Incompatible file type', count=-3)
-        else: #POST
+        else:  # POST
             total_predictions = request.form.get('total', None)
             min_prob = request.form.get('min_prob', None)
             only_number = request.form.get('only_number', False)
             id_task = request.form.get('id', False)
+            force_square = request.form.get('force_square', True)
             try:
                 image_array = get_image()
             except ValueError:
                 return jsonify(error='Missing image', count=-2)
             except OSError:
                 return jsonify(error='Incompatible file type', count=-3)
-
+        
+        if force_square == 'false':
+            force_square = False
+            
         if total_predictions is not None:
             try:
                 total_predictions = int(total_predictions)
@@ -88,12 +142,17 @@ def predict(model_name):
                 min_prob = None
         if only_number == "False":
             only_number = None
-        
+
         if not id_task:
             return jsonify(error='Missing task_id', count=-4)
 
+        outsetx = 0
+        outsety = 0
+        scale = 0
 
-        
+        if force_square:
+            image_array, outsetx, outsety, scale = mod_image(
+                SAVE_PATH_TMP, None, None, True)
 
         # Wait for the model to finish loading.
         NETWORK_START_THREAD.join()
@@ -105,19 +164,21 @@ def predict(model_name):
 
         if total_predictions:
             objects = objects[:total_predictions]
-
+        
         # Save predicted image.
         if SAVE_PATH_GLOBAL:
-            print("{}{}_Counted.jpg".format(SAVE_PATH_GLOBAL,id_task))
-            vis_objects(np.array(image_array), objects).save("{}{}_Counted.jpg".format(SAVE_PATH_GLOBAL,id_task))
+            path_img_vis = "{}{}_Counted.jpg".format(SAVE_PATH_GLOBAL, id_task)
+            print(path_img_vis, "Saved")
+            vis_objects(np.array(image_array), objects).save(path_img_vis)
 
         if only_number:
             return jsonify({'count': len(objects)})
-        
-        return jsonify({'objects': objects, 'count': len(objects)})
+
+        path_public = 'static/' + path_img_vis.split('static/')[-1]
+        return jsonify({'objects': objects, 'count': len(objects),
+                        'image_vis': path_public, 'mod_img': {'outsetx': outsetx, 'outsety': outsety, 'scale': scale}})
     except Exception as e:
         return jsonify(error='Unkown error', data=str(e), count=-666)
-    
 
 
 def start_network(config):
@@ -138,10 +199,12 @@ def start_network(config):
 @click.option('--port', default=5000, help='Port to listen to.')
 @click.option('--debug', is_flag=False, help='Set debug level logging.')
 @click.option('--min-prob', default=0.5, type=float, help='Only get bounding boxes with probability larger than.')  # noqa
-@click.option('--save-path', default="./output/", help='Put the location to save images predicted')  # noqa
-
+@click.option('--save-path', default="./luminoth/serve/static/output/", help='Put the location to save images predicted')  # noqa
 def web(config_files, checkpoint, override_params, host, port, debug, min_prob, save_path):
     global SAVE_PATH_GLOBAL
+    global SAVE_PATH_TMP
+    SAVE_PATH_TMP = '/tmp/predict.jpg'
+
     if save_path:
         SAVE_PATH_GLOBAL = save_path
     if debug:
@@ -171,12 +234,12 @@ def web(config_files, checkpoint, override_params, host, port, debug, min_prob, 
         raise ValueError(
             "Model type '{}' not supported".format(config.model.type)
         )
-    
+
     # Verfy folder path or create
     try:
         os.stat(SAVE_PATH_GLOBAL)
     except:
-        os.mkdir(SAVE_PATH_GLOBAL)    
+        os.mkdir(SAVE_PATH_GLOBAL)
 
     # Initialize model
     global NETWORK_START_THREAD
@@ -187,8 +250,9 @@ def web(config_files, checkpoint, override_params, host, port, debug, min_prob, 
         app.config.from_object('config.DebugConfig')
     else:
         app.config.from_object('config.ProductionConfig')
-        
+
     app.run(host=host, port=port, debug=debug)
+
 
 if __name__ == "__main__":
     web()
