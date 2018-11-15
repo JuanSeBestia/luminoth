@@ -26,10 +26,11 @@ html {
 }
 
 .main {
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   min-height: 100vh;
   min-width: 400px;
+  text-align: center;
 }
 
 .header {
@@ -144,7 +145,7 @@ html {
 }
 
 .main-result {
-  display: flex;
+  /* display: flex; */
   flex-direction: row;
   flex: 1;
   margin: 20px;
@@ -176,7 +177,7 @@ html {
   max-height: 500px;
   box-sizing: border-box;
 
-  width: 310px;
+  width: 80vw;
   padding: 10px;
 
   border-radius: 5px;
