@@ -144,7 +144,7 @@ def predict(model_name):
             try:
                 min_prob = float(min_prob)
             except ValueError:
-                min_prob = None
+                min_prob = 0.6
         
         if only_number == "false":
             only_number = None
