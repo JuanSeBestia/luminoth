@@ -64,7 +64,7 @@ def build_colormap():
     return colormap
 
 
-def draw_rectangle(draw, coordinates, color, width=1, fill=30):
+def draw_rectangle(draw, coordinates, color, width=3, fill=30):
     """Draw a rectangle with an optional width."""
     # Add alphas to the color so we have a small overlay over the object.
     fill = color + (fill,)
@@ -136,7 +136,7 @@ def draw_label(draw, coords, label, prob, color, scale=1):
     ], prob, font=prob_font)
 
 
-def vis_objects(image, objects, colormap=None, labels=True, scale=1, fill=30):
+def vis_objects(image, objects, colormap=None, labels=True, scale=1, fill=60):
     """Visualize objects as returned by `Detector`.
 
     Arguments:
@@ -167,8 +167,9 @@ def vis_objects(image, objects, colormap=None, labels=True, scale=1, fill=30):
     for obj in objects:
         # TODO: Can we do image resolution-agnostic?
         # color = colormap(obj['label'])
-        p = obj['prob']
-        color = (int(p * 255), int(p * 255), int(p * 255))
+        # p = obj['prob']
+        p = 1 # Always
+        color = (int(p * 230), int(p * 0), int(p * 230)) # Purple
         draw_rectangle(
             # draw, obj['bbox'], color, width=round(3 * scale), fill=fill
             draw, obj['bbox'], color, fill=fill
