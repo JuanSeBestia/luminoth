@@ -139,14 +139,18 @@ def predict(model_name):
                 total_predictions = int(total_predictions)
             except ValueError:
                 total_predictions = None
+        
         if min_prob is not None:
             try:
                 min_prob = float(min_prob)
             except ValueError:
                 min_prob = None
-        if only_number == "False":
+        
+        if only_number == "false":
             only_number = None
-
+        else:
+            only_number = True
+            
         if not id_task:
             return jsonify(error='Missing task_id', count=-4)
 
@@ -174,11 +178,12 @@ def predict(model_name):
             path_img_vis = "{}{}_Counted.jpg".format(SAVE_PATH_GLOBAL, id_task)
             print(path_img_vis, "Saved")
             vis_objects(np.array(image_array), objects).save(path_img_vis)
+        
+        path_public = 'static/' + path_img_vis.split('static/')[-1]
 
         if only_number:
-            return jsonify({'count': len(objects)})
+            return jsonify({'count': len(objects),'image_vis': path_public})
 
-        path_public = 'static/' + path_img_vis.split('static/')[-1]
         return jsonify({'objects': objects, 'count': len(objects),
                         'image_vis': path_public, 'mod_img': {'outsetx': outsetx, 'outsety': outsety, 'scale': scale}})
     except Exception as e:
